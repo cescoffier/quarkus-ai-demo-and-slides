@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const slidesContainer = document.querySelector('.reveal .slides');
+    if (slidesContainer) {
+        new MutationObserver(() => initAllDemos()).observe(slidesContainer, {
+            childList: true, subtree: true
+        });
+    }
     initAllDemos();
 });
 

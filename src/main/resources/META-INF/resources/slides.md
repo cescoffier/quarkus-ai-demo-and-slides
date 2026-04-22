@@ -343,3 +343,59 @@ Note: Quarkus Flow takes everything we've built and wraps it in durable executio
 *The agent analyzes the request, then pauses for manager approval.*
 
 Note: The agent processes a refund request and recommends action. The workflow pauses for manager approval. Full audit trail.
+
+---
+
+## The Full Picture
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Ch 5: Durable Coordination                        │
+│        Quarkus Flow, human-in-the-loop              │
+├─────────────────────────────────────────────────────┤
+│  Ch 4: Multi-Agent Systems                         │
+│        A2A, planner, constrained autonomy           │
+├─────────────────────────────────────────────────────┤
+│  Ch 3: Tool-Using Agents                           │
+│        @Tool, tool guardrails, MCP                  │
+├─────────────────────────────────────────────────────┤
+│  Ch 2: AI-Infused Applications                     │
+│        Guardrails, RAG, context engineering          │
+├─────────────────────────────────────────────────────┤
+│  Ch 1: The Chatbot                                 │
+│        @RegisterAiService, dev mode                  │
+└─────────────────────────────────────────────────────┘
+```
+
+**One platform. One programming model. Every layer builds on the last.**
+
+Note: Five chapters — from a 10-line chatbot to durable agentic coordination. Same CDI model, same configuration, same dev mode throughout. That's cohesion.
+
+---
+
+## Enterprise-Grade AI — Built In, Not Bolted On
+
+| Concern | What You Get |
+|---------|-------------|
+| **Observability** | OpenTelemetry across all AI interactions |
+| **Testability** | Mock AI services, deterministic testing |
+| **Security** | Auth, secrets management for API keys |
+| **Fault tolerance** | Retries, fallbacks, circuit breakers |
+| **Model portability** | Swap providers — one config property |
+| **Dev experience** | Hot reload everything |
+
+<div class="key-message">Every chapter comes with these built in. That's what a platform gives you.</div>
+
+Note: Every chapter comes with observability, testability, security, fault tolerance, and model portability built in.
+
+---
+
+## Thank You
+
+### Questions?
+
+- Quarkus AI documentation: [docs.quarkiverse.io/quarkus-langchain4j](https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html)
+- LangChain4j: [github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j)
+- MCP specification: [modelcontextprotocol.io](https://modelcontextprotocol.io)
+
+**Clement Escoffier** — @clementplop
