@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Chatbot to Agentic: The Quarkus AI Story</title>
+    <link rel="stylesheet" href="/_static/reveal.js/5.2.1/dist/reset.css">
+    <link rel="stylesheet" href="/_static/reveal.js/5.2.1/dist/reveal.css">
+    <link rel="stylesheet" href="/_static/reveal.js/5.2.1/plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section data-markdown="slides.md"
+                     data-separator="^---$"
+                     data-separator-vertical="^--$"
+                     data-separator-notes="^Note:">
+            </section>
+        </div>
+    </div>
+
+    <script src="/_static/reveal.js/5.2.1/dist/reveal.esm.js" type="module"></script>
+    <script type="module">
+        import Reveal from '/_static/reveal.js/5.2.1/dist/reveal.esm.js';
+        import Markdown from '/_static/reveal.js/5.2.1/plugin/markdown/markdown.esm.js';
+        import Highlight from '/_static/reveal.js/5.2.1/plugin/highlight/highlight.esm.js';
+        import Notes from '/_static/reveal.js/5.2.1/plugin/notes/notes.esm.js';
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            width: 1280,
+            height: 720,
+            margin: 0.1,
+            plugins: [Markdown, Highlight, Notes]
+        });
+    </script>
+    <script src="/js/demos.js" defer></script>
+</body>
+</html>
