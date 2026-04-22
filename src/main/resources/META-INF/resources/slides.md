@@ -289,3 +289,57 @@ Note: These four patterns cover 80% of what you'll need.
 </div>
 
 Note: The planner breaks it down: research agent gathers information, writer agent synthesizes a report.
+
+---
+
+<!-- .slide: data-background-color="#5B9BD5" -->
+
+## Chapter 5: Making It Durable
+
+From impressive demos to production reality.
+
+---
+
+## The Problem with In-Memory Agents
+
+Everything so far runs in memory. Enterprise workflows:
+
+- **Take hours or days** — waiting for approvals
+- **Must survive restarts** — deployments, crashes
+- **Need auditability** — what happened, when, why
+- **Require human-in-the-loop** — some decisions can't be automated
+
+<div class="key-message">In-memory agents are for demos. Durable agents are for production.</div>
+
+Note: Your agent demos work great — until the pod restarts or the approval takes three days.
+
+---
+
+## Quarkus Flow: Durable Agentic Coordination
+
+- **Durable execution** — state persisted, survives crashes
+- **Human-in-the-loop** — pause, wait for approval, resume
+- **Long-running** — minutes, hours, days
+- **Observable** — every step traced, full audit trail
+- Ties everything together: agents + tools + guardrails
+
+<div class="key-message">Quarkus Flow turns AI demos into AI systems.</div>
+
+Note: Quarkus Flow takes everything we've built and wraps it in durable execution.
+
+---
+
+## Live Demo — Durable Workflow
+
+<div class="demo-panel demo-workflow">
+    <button class="workflow-trigger chat-send">Start Refund Workflow (Order #1238 — $499.99)</button>
+    <div class="workflow-steps" style="margin-top: 1em;"></div>
+    <div class="approval-buttons" style="display: none;">
+        <button class="btn-approve">Approve Refund</button>
+        <button class="btn-reject">Reject Refund</button>
+    </div>
+</div>
+
+*The agent analyzes the request, then pauses for manager approval.*
+
+Note: The agent processes a refund request and recommends action. The workflow pauses for manager approval. Full audit trail.

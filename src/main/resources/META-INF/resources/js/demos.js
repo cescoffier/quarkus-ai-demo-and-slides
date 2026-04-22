@@ -6,6 +6,7 @@ function initAllDemos() {
     initChatPanels();
     initAuditPanels();
     initMultiAgentPanels();
+    initWorkflowPanels();
 }
 
 function initChatPanels() {
@@ -123,5 +124,62 @@ function initAuditPanels() {
                 panel.scrollTop = panel.scrollHeight;
             } catch (e) { /* ignore */ }
         }, 1000);
+    });
+}
+
+function initWorkflowPanels() {
+    document.querySelectorAll('.demo-workflow').forEach(panel => {
+        if (panel.dataset.initialized) return;
+        panel.dataset.initialized = 'true';
+
+        const triggerBtn = panel.querySelector('.workflow-trigger');
+        const stepsDiv = panel.querySelector('.workflow-steps');
+        const approvalDiv = panel.querySelector('.approval-buttons');
+        const approveBtn = panel.querySelector('.btn-approve');
+        const rejectBtn = panel.querySelector('.btn-reject');
+
+        function renderState(state) {
+            stepsDiv.innerHTML = state.steps.map(s => {
+                const icon = s.status === 'completed' ? '✓' :
+                             s.status === 'waiting' ? '⏸' :
+                             s.status === 'active' ? '⏳' : '○';
+                return `<div class="workflow-step ${s.status}">
+                    <span class="step-icon">${icon}</span>
+                    <div>
+                        <strong>${s.name}</strong>
+                        <div style="font-size:0.85em;color:#666">${s.detail}</div>
+                        <div style="font-size:0.75em;color:#999">${s.timestamp}</div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            approvalDiv.style.display = state.waitingForApproval ? 'flex' : 'none';
+        }
+
+        triggerBtn.addEventListener('click', async () => {
+            triggerBtn.disabled = true;
+            stepsDiv.innerHTML = '<div class="workflow-step active"><span class="step-icon">⏳</span> Starting workflow...</div>';
+            try {
+                const res = await fetch('/api/demo/workflow/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: 1238, reason: 'Product not as described' })
+                });
+                renderState(await res.json());
+            } catch (e) {
+                stepsDiv.innerHTML = '<div class="workflow-step">Error: ' + e.message + '</div>';
+            }
+            triggerBtn.disabled = false;
+        });
+
+        approveBtn.addEventListener('click', async () => {
+            const res = await fetch('/api/demo/workflow/approve', { method: 'POST' });
+            renderState(await res.json());
+        });
+
+        rejectBtn.addEventListener('click', async () => {
+            const res = await fetch('/api/demo/workflow/reject', { method: 'POST' });
+            renderState(await res.json());
+        });
     });
 }
