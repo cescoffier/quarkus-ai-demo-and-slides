@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initAllDemos() {
     initChatPanels();
     initAuditPanels();
+    initMultiAgentPanels();
 }
 
 function initChatPanels() {
@@ -54,6 +55,53 @@ function appendMessage(container, text, type) {
     div.textContent = text;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
+}
+
+function initMultiAgentPanels() {
+    document.querySelectorAll('.demo-multi-agent').forEach(panel => {
+        if (panel.dataset.initialized) return;
+        panel.dataset.initialized = 'true';
+
+        const input = panel.querySelector('.task-input');
+        const sendBtn = panel.querySelector('.task-send');
+        const stepsDiv = panel.querySelector('.agent-steps');
+        const resultDiv = panel.querySelector('.agent-result');
+
+        async function submitTask() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            stepsDiv.innerHTML = '<div class="workflow-step active"><span class="step-icon">&#x23F3;</span> Processing...</div>';
+            resultDiv.textContent = '';
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/demo/multi-agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task: text })
+                });
+                const data = await res.json();
+
+                stepsDiv.innerHTML = data.steps.map(s =>
+                    `<div class="workflow-step ${s.status}">
+                        <span class="step-icon">${s.status === 'completed' ? '&#x2713;' : '&#x23F3;'}</span>
+                        <strong>${s.agent}</strong>: ${s.detail}
+                    </div>`
+                ).join('');
+
+                resultDiv.textContent = data.finalResult;
+            } catch (e) {
+                resultDiv.textContent = 'Error: ' + e.message;
+            }
+            sendBtn.disabled = false;
+        }
+
+        sendBtn.addEventListener('click', submitTask);
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitTask();
+        });
+    });
 }
 
 function initAuditPanels() {

@@ -220,3 +220,72 @@ Note: MCP is becoming a universal standard for connecting agents to tools.
 *Try: "What's the status of order #1234?" then "Cancel order #1234"*
 
 Note: Watch what happens. I ask about an order — the agent calls getOrderStatus. Now I ask to cancel — the tool guardrail catches it.
+
+---
+
+<!-- .slide: data-background-color="#5B9BD5" -->
+
+## Chapter 4: Coordinating Agents
+
+From solo performer to orchestra.
+
+---
+
+## A2A: Agents Talking to Agents
+
+- Each agent publishes an **agent card** — "here's what I can do"
+- Agents discover, negotiate, and delegate
+- **Federated AI** — no single monolithic agent
+- **Team autonomy** — each team owns their agents
+
+<div class="key-message">A2A: federated AI. Each team owns their agents.</div>
+
+Note: In a real enterprise, one team owns orders, another owns inventory. You don't build one giant agent.
+
+---
+
+## The Planner: Orchestrating the Work
+
+```
+Fully scripted <─────────────────→ Fully autonomous
+  "Follow this        "Here are the        "Figure it out"
+   exact plan"          boundaries"
+```
+
+- **Fully scripted** — safe, predictable, brittle
+- **Fully autonomous** — flexible, unpredictable
+- **Constrained autonomy** — freedom *within guardrails*
+
+<div class="key-message">How much freedom do you give the AI? Quarkus lets you choose.</div>
+
+Note: This is the most important design decision in agentic AI.
+
+---
+
+## Coordination Patterns
+
+| Pattern | How It Works | Example |
+|---------|-------------|---------|
+| **Sequential** | A → B → C | Intake → Review → Approval |
+| **Fan-out** | Parallel, aggregated | Research from 5 sources |
+| **Supervisor** | One oversees others | Manager monitors workers |
+| **Debate** | Different perspectives | Legal + Business → Decision |
+
+<div class="key-message">These patterns are your enterprise workflows.</div>
+
+Note: These four patterns cover 80% of what you'll need.
+
+---
+
+## Live Demo — Multi-Agent
+
+<div class="demo-panel demo-multi-agent">
+    <div class="chat-input-row">
+        <input type="text" class="task-input" placeholder="e.g., Research the benefits of Quarkus for AI applications">
+        <button class="task-send chat-send">Submit</button>
+    </div>
+    <div class="agent-steps workflow-steps" style="margin-top: 1em;"></div>
+    <div class="agent-result" style="margin-top: 1em; padding: 0.5em; white-space: pre-wrap;"></div>
+</div>
+
+Note: The planner breaks it down: research agent gathers information, writer agent synthesizes a report.
