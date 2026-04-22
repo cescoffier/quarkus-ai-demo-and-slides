@@ -1,5 +1,6 @@
 package io.quarkus.presentation.rest;
 
+import dev.langchain4j.guardrail.GuardrailException;
 import io.quarkus.presentation.ai.CustomerAssistant;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
@@ -21,7 +22,11 @@ public class ChatResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChatResponse chat(ChatRequest request) {
-        String reply = assistant.chat(request.message());
-        return new ChatResponse(reply, false);
+        try {
+            String reply = assistant.chat(request.message());
+            return new ChatResponse(reply, false);
+        } catch (GuardrailException e) {
+            return new ChatResponse(e.getMessage(), true);
+        }
     }
 }

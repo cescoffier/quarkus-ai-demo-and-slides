@@ -71,6 +71,10 @@
             <artifactId>quarkus-langchain4j-openai</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkiverse.langchain4j</groupId>
+            <artifactId>quarkus-langchain4j-easy-rag</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mvnpm</groupId>
             <artifactId>reveal.js</artifactId>
             <version>5.2.1</version>
