@@ -37,3 +37,17 @@ public interface MyAssistant {
 **10 lines of code. Any model. Hot reload your prompts.**
 
 Note: Look at this. In Quarkus, it's a CDI interface. The @RegisterAiService annotation does the wiring.
+
+---
+
+## Live Demo — Hello, AI
+
+<div class="demo-panel demo-chat" data-endpoint="/api/chat">
+    <div class="chat-messages"></div>
+    <div class="chat-input-row">
+        <input type="text" class="chat-input" placeholder="Ask Acme Corp support anything...">
+        <button class="chat-send">Send</button>
+    </div>
+</div>
+
+Note: Let me show you this live. Notice I can change the system prompt and the response changes immediately — no restart.
