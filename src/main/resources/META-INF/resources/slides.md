@@ -139,3 +139,84 @@ Note: The prompt is everything. Which model you use matters far less than what y
 *Try: "What's the return policy?" then "What's the weather?"*
 
 Note: The AI knows about our products because of RAG. But when I ask something off-topic, the input guardrail catches it before it even reaches the model.
+
+---
+
+<!-- .slide: data-background-color="#5B9BD5" -->
+
+## Chapter 3: Agents That Act
+
+What happens when AI can use your code?
+
+---
+
+## Tools: Giving AI Hands
+
+```java
+@Tool("Check the status of a customer order")
+public String getOrderStatus(long orderId) {
+    return orderService.findById(orderId).getStatus();
+}
+```
+
+- Annotate a method with `@Tool` — exposed to the model
+- The model decides *when* and *how* to call it
+- Runs in your Quarkus app — full CDI context, transactions, security
+
+<div class="key-message">Your Java services are already the tools. Just add @Tool.</div>
+
+Note: The @Tool annotation turns any Java method into something the AI can call.
+
+---
+
+## Guardrails for Tools
+
+```
+Full autonomy <──────────────────> Full human control
+  "Do anything"    "Do within bounds"    "Ask before acting"
+```
+
+- **Parameter validation** — reject invalid inputs
+- **Scope restriction** — limit access
+- **Approval flows** — flag high-risk actions
+- **Audit trail** — every tool call logged
+
+<div class="key-message">Enterprise AI means controlled AI.</div>
+
+Note: Giving AI tools is powerful — and dangerous. Can it cancel orders? Transfer funds? You need control.
+
+---
+
+## MCP: A Standard Protocol
+
+```java
+@MCPTool(name = "order-status", description = "Get order status")
+public OrderStatus getOrderStatus(long orderId) {
+    return orderService.findById(orderId).getStatus();
+}
+```
+
+- **Quarkus as MCP server** — expose your services as MCP tools
+- **Quarkus as MCP client** — consume external capabilities
+- One protocol, universal interoperability
+
+<div class="key-message">MCP: the USB of AI. Quarkus speaks it natively.</div>
+
+Note: MCP is becoming a universal standard for connecting agents to tools.
+
+---
+
+## Live Demo — Tool-Using Agent
+
+<div class="demo-panel demo-chat" data-endpoint="/api/chat">
+    <div class="chat-messages"></div>
+    <div class="chat-input-row">
+        <input type="text" class="chat-input" placeholder="Try: What's the status of order #1234?">
+        <button class="chat-send">Send</button>
+    </div>
+    <div class="audit-log demo-audit-log"></div>
+</div>
+
+*Try: "What's the status of order #1234?" then "Cancel order #1234"*
+
+Note: Watch what happens. I ask about an order — the agent calls getOrderStatus. Now I ask to cancel — the tool guardrail catches it.

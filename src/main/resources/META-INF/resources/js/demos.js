@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    initChatPanels();
+    initAllDemos();
 });
+
+function initAllDemos() {
+    initChatPanels();
+    initAuditPanels();
+}
 
 function initChatPanels() {
     document.querySelectorAll('.demo-chat').forEach(panel => {
@@ -49,4 +54,26 @@ function appendMessage(container, text, type) {
     div.textContent = text;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
+}
+
+function initAuditPanels() {
+    document.querySelectorAll('.demo-audit-log').forEach(panel => {
+        if (panel.dataset.initialized) return;
+        panel.dataset.initialized = 'true';
+
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/demo/audit');
+                const entries = await res.json();
+                panel.innerHTML = entries.map(e =>
+                    `<div class="audit-entry">
+                        <span style="color:#888">[${e.timestamp}]</span>
+                        <span class="tool-name">${e.toolName}</span>(${e.parameters})
+                        ${e.result ? `→ <span class="${e.result.includes('APPROVAL') || e.result.includes('NOT FOUND') ? 'tool-blocked' : 'tool-result'}">${e.result}</span>` : ''}
+                    </div>`
+                ).join('');
+                panel.scrollTop = panel.scrollHeight;
+            } catch (e) { /* ignore */ }
+        }, 1000);
+    });
 }

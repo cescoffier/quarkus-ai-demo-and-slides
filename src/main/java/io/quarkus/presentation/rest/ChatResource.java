@@ -27,6 +27,11 @@ public class ChatResource {
             return new ChatResponse(reply, false);
         } catch (GuardrailException e) {
             return new ChatResponse(e.getMessage(), true);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("requires manager approval")) {
+                return new ChatResponse(e.getMessage(), true);
+            }
+            return new ChatResponse("An error occurred: " + e.getMessage(), true);
         }
     }
 }
