@@ -2,28 +2,22 @@ package io.quarkus.presentation.rest;
 
 import dev.langchain4j.guardrail.GuardrailException;
 import io.quarkus.presentation.ai.CustomerAssistant;
+import io.quarkus.websockets.next.OnTextMessage;
+import io.quarkus.websockets.next.WebSocket;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.core.MediaType;
 
-@Path("/api/chat")
-public class ChatResource {
+@WebSocket(path = "/ws/chat")
+public class ChatWebSocket {
 
     @Inject
     CustomerAssistant assistant;
 
-    public record ChatRequest(String message) {}
     public record ChatResponse(String reply, boolean blocked) {}
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ChatResponse chat(ChatRequest request) {
+    @OnTextMessage
+    public ChatResponse onMessage(String message) {
         try {
-            String reply = assistant.chat(request.message());
+            String reply = assistant.chat(message);
             return new ChatResponse(reply, false);
         } catch (GuardrailException e) {
             return new ChatResponse(e.getMessage(), true);

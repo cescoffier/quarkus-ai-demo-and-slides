@@ -6,7 +6,7 @@ import dev.langchain4j.service.guardrail.InputGuardrails;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import jakarta.enterprise.context.SessionScoped;
 
-@RegisterAiService(tools = OrderTools.class)
+@RegisterAiService(tools = OrderTools.class, retrievalAugmentor = AcmeRetrievalAugmentor.class)
 @SessionScoped
 public interface CustomerAssistant {
 

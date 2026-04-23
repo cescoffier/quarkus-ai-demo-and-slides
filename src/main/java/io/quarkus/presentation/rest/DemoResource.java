@@ -1,23 +1,41 @@
 package io.quarkus.presentation.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
+import io.cloudevents.core.provider.EventFormatProvider;
+import io.cloudevents.jackson.JsonFormat;
 import io.quarkus.presentation.ai.AuditLog;
 import io.quarkus.presentation.ai.Planner;
-import io.quarkus.presentation.ai.WorkflowSimulator;
+import io.quarkus.presentation.ai.workflow.RefundDecision;
+import io.quarkus.presentation.ai.workflow.RefundRequest;
+import io.quarkus.presentation.ai.workflow.RefundWorkflow;
+import io.quarkus.presentation.ai.workflow.RefundWorkflowTracker;
+import io.serverlessworkflow.impl.WorkflowInstance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 @Path("/api/demo")
 public class DemoResource {
 
     public record TaskRequest(String task) {}
-    public record RefundRequest(long orderId, String reason) {}
+
+    private static final JsonFormat CE_JSON = (JsonFormat) EventFormatProvider.getInstance()
+            .resolveFormat(JsonFormat.CONTENT_TYPE);
 
     @Inject
     AuditLog auditLog;
@@ -26,7 +44,17 @@ public class DemoResource {
     Planner planner;
 
     @Inject
-    WorkflowSimulator workflow;
+    RefundWorkflow workflow;
+
+    @Inject
+    RefundWorkflowTracker tracker;
+
+    @Inject
+    ObjectMapper objectMapper;
+
+    @Inject
+    @Channel("flow-in-outgoing")
+    Emitter<byte[]> flowIn;
 
     @GET
     @Path("/audit")
@@ -49,39 +77,55 @@ public class DemoResource {
         return planner.execute(request.task());
     }
 
-    @GET
-    @Path("/multi-agent/status")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Planner.PlanStep> getMultiAgentStatus() {
-        return planner.getCurrentSteps();
-    }
-
     @POST
     @Path("/workflow/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowSimulator.WorkflowState startWorkflow(RefundRequest request) {
-        return workflow.startRefundWorkflow(request.orderId(), request.reason());
+    public Response startWorkflow(RefundRequest request) {
+        WorkflowInstance instance = workflow.instance(request);
+        tracker.reset(instance.id());
+        tracker.addStep("Receive Request", "completed",
+                "Refund request for order #" + request.orderId() + ": " + request.reason());
+        tracker.addStep("AI Analysis", "active", "Analyzing request...");
+        instance.start();
+        return Response.accepted(
+                Map.of("instanceId", instance.id())).build();
     }
 
     @POST
     @Path("/workflow/approve")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowSimulator.WorkflowState approveWorkflow() {
-        return workflow.approve();
+    public Response approveWorkflow() throws JsonProcessingException {
+        RefundDecision decision = new RefundDecision(RefundDecision.Status.APPROVED, "Manager approved");
+        sendDecisionEvent(decision);
+        return Response.accepted().build();
     }
 
     @POST
     @Path("/workflow/reject")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowSimulator.WorkflowState rejectWorkflow() {
-        return workflow.reject();
+    public Response rejectWorkflow() throws JsonProcessingException {
+        RefundDecision decision = new RefundDecision(RefundDecision.Status.REJECTED, "Manager rejected");
+        sendDecisionEvent(decision);
+        return Response.accepted().build();
     }
 
     @GET
     @Path("/workflow/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowSimulator.WorkflowState getWorkflowStatus() {
-        return workflow.getState();
+    public RefundWorkflowTracker.WorkflowState getWorkflowStatus() {
+        return tracker.getState();
+    }
+
+    private void sendDecisionEvent(RefundDecision decision) throws JsonProcessingException {
+        byte[] body = objectMapper.writeValueAsBytes(decision);
+        CloudEvent ce = CloudEventBuilder.v1()
+                .withId(UUID.randomUUID().toString())
+                .withSource(URI.create("api:/refund"))
+                .withType("refund.decision.made")
+                .withDataContentType("application/json")
+                .withData(body)
+                .build();
+        flowIn.send(CE_JSON.serialize(ce));
     }
 }

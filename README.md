@@ -1,62 +1,85 @@
-# quarkus-ai-slides
+# From Chatbot to Agentic: The Quarkus AI Story
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+A 55-minute conference talk delivered as a single Quarkus application that serves both the [reveal.js](https://revealjs.com/) slide deck and all live demos.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Talk Structure
 
-## Running the application in dev mode
+The presentation walks through six chapters covering enterprise AI with Quarkus:
 
-You can run your application in dev mode that enables live coding using:
+1. **Hello, AI** -- AI Services, first integration
+2. **Making It Real** -- Guardrails, RAG, context engineering, memory
+3. **Agents That Act** -- Tools, MCP, tool approval
+4. **Coordinating Agents** -- A2A, agentic loop, multi-agent patterns (`@SequenceAgent`)
+5. **Making It Durable** -- Quarkus Flow, event-driven workflows, human-in-the-loop
+6. **Trust and Verify** -- Observability, auditing, testing, evaluation
 
-```shell script
+## Live Demos
+
+Each demo runs inside the presentation itself -- no terminal switching, no separate apps.
+
+| Demo | What it shows |
+|------|--------------|
+| **Hello, AI** | Simple AI service chat via WebSocket |
+| **Guardrails + RAG** | Input guardrails rejecting off-topic prompts, RAG-augmented answers from Acme Corp docs |
+| **Tool-Using Agent** | AI calling tools (order lookup, cancellation), tool approval flow, audit log |
+| **Multi-Agent** | `@SequenceAgent` pipeline: Planner -> Research Agent -> Writer Agent |
+| **Durable Workflow** | Quarkus Flow refund workflow with AI analysis, Kafka-based human-in-the-loop approval |
+
+## Tech Stack
+
+- **Quarkus 3.34.5** with Dev Services (PostgreSQL, Redpanda/Kafka via Testcontainers)
+- **Quarkus LangChain4j 1.9.0.CR2** -- AI Services, guardrails, RAG, tools, `@SequenceAgent`
+- **Quarkus Flow 0.8.0** -- Durable workflow engine (CNCF Serverless Workflow spec)
+- **OpenAI GPT-4o** via `quarkus-langchain4j-openai`
+- **reveal.js 5.2.1** served as a static resource via mvnpm
+
+## Prerequisites
+
+- Java 21+
+- Docker (for Dev Services)
+- An OpenAI API key
+
+## Running
+
+```shell
+export OPENAI_API_KEY=sk-...
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+Open http://localhost:8080 to view the slides. All demos work in dev mode -- PostgreSQL and Kafka are started automatically by Dev Services.
 
-## Packaging and running the application
+## Project Layout
 
-The application can be packaged using:
-
-```shell script
-./mvnw package
 ```
+src/main/java/io/quarkus/presentation/
+  ai/
+    CustomerAssistant.java        # Main AI service (chat, guardrails, RAG, tools)
+    TopicGuardrail.java           # Input guardrail for off-topic detection
+    OrderTools.java               # AI tools: order status, cancellation
+    AcmeRetrievalAugmentor.java   # RAG retrieval augmentor
+    RagIngestion.java             # Loads product/policy docs into embedding store
+    Planner.java                  # Multi-agent orchestrator
+    TopicResearchWorkflow.java    # @SequenceAgent: ResearchAgent + WriterAgent
+    ResearchAgent.java            # Research sub-agent
+    WriterAgent.java              # Writer sub-agent
+    workflow/
+      RefundWorkflow.java         # Quarkus Flow workflow definition
+      RefundAnalysisAgent.java    # AI agent for refund analysis
+      RefundService.java          # Refund processing logic
+      RefundBridge.java           # Kafka CloudEvent bridge for UI state
+      RefundWorkflowTracker.java  # Workflow state tracker for polling UI
+  rest/
+    ChatWebSocket.java            # WebSocket endpoint for chat demo
+    DemoResource.java             # REST endpoints for all demos
+  model/
+    Customer.java, Order.java     # JPA entities
+  service/
+    OrderService.java             # Order persistence
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+src/main/resources/
+  META-INF/resources/
+    slides.md                     # All slides (reveal.js markdown)
+    index.html                    # reveal.js setup
+    js/demos.js                   # Demo panel initialization and interaction
+    css/theme.css                 # Slide theme with CSS Paint API worklets
 ```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/quarkus-ai-slides-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- WebSockets Next ([guide](https://quarkus.io/guides/websockets-next-reference)): Implementation of the WebSocket API with enhanced efficiency and usability
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC

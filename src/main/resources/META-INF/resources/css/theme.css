@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Montserrat:wght@400;700;900&family=Signika:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-    --color-blue: #5B9BD5;
-    --color-red: #E84B4B;
-    --color-dark: #333333;
+    --color-blue: #4595EB;
+    --color-red: #FF024A;
+    --color-dark: #121212;
     --color-gray: #f5f5f5;
-    --font-body: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+    --font-title: 'Montserrat', sans-serif;
+    --font-body: 'Signika', sans-serif;
     --font-handwritten: 'Caveat', cursive;
     --font-code: 'JetBrains Mono', monospace;
 }
@@ -13,26 +14,99 @@
 .reveal {
     font-family: var(--font-body);
     font-size: 32px;
+    font-weight: 300;
+    text-rendering: optimizeLegibility;
     color: var(--color-dark);
+}
+
+.reveal ::selection {
+    background: var(--color-red);
+    color: white;
+}
+
+.reveal .slides section {
+    text-align: left;
 }
 
 .reveal h1, .reveal h2, .reveal h3 {
-    font-family: var(--font-body);
+    font-family: var(--font-title);
     color: var(--color-dark);
     font-weight: 700;
     text-transform: none;
-    letter-spacing: normal;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    text-align: left;
+}
+
+/* Sketchy underline on content slide titles — wobbly quadratic curves */
+.reveal h2 {
+    --underline-color: var(--color-blue);
+    --underline-width: 1.5;
+    --underline-lines: 6;
+    --underline-spread: 10;
+    background-image: paint(sketchyUnderline);
+    background-repeat: no-repeat;
+    padding-bottom: 14px;
+}
+
+/* Fallback for browsers without Paint API */
+@supports not (background: paint(id)) {
+    .reveal h2 {
+        border-bottom: 2px solid var(--color-blue);
+    }
+}
+
+/* Chapter dividers — no underline, centered */
+.reveal section[data-background-color="#4595EB"] {
+    text-align: center;
+}
+.reveal section[data-background-color="#4595EB"] h2 {
+    background-image: none;
+    border-bottom: none;
+    padding-bottom: 0;
+    padding-right: 0;
+}
+
+/* Demo slides — centered title */
+.reveal section:has(.demo-panel) h2 {
+    text-align: center;
 }
 
 .reveal h1 { font-size: 2.2em; }
-.reveal h2 { font-size: 1.6em; }
+.reveal h2 { font-size: 1.8em; margin-bottom: 0.5em; }
 .reveal h3 { font-size: 1.2em; }
 
-.reveal strong { color: var(--color-blue); }
-.reveal em { font-style: italic; }
+.reveal strong {
+    --emphasis-color: rgba(69, 149, 235, 0.35);
+    --emphasis-width: 3;
+    background-image: paint(sketchyEmphasis);
+    font-weight: 700;
+    color: var(--color-dark);
+    padding: 3px 2px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
-.reveal a { color: var(--color-blue); text-decoration: none; }
-.reveal a:hover { text-decoration: underline; }
+/* Fallback for browsers without Paint API */
+@supports not (background: paint(id)) {
+    .reveal strong {
+        color: var(--color-blue);
+        background-image: none;
+    }
+}
+
+/* No emphasis scribble on blue chapter dividers */
+.reveal section[data-background-color="#4595EB"] strong {
+    background-image: none;
+    color: white;
+}
+
+.reveal a { color: var(--color-blue); text-decoration: none; border-bottom: 0.1em solid var(--color-blue); }
+.reveal a:hover { border-bottom-color: var(--color-red); }
+
+.reveal em {
+    color: #4a8bc4;
+}
 
 .reveal code {
     font-family: var(--font-code);
@@ -43,25 +117,134 @@
 }
 
 .reveal pre {
-    width: 100%;
+    width: 85%;
     font-size: 0.55em;
     box-shadow: none;
+    text-align: left;
+    margin-left: 0;
 }
 
 .reveal pre code {
     font-family: var(--font-code);
-    background: var(--color-gray);
-    padding: 1em;
-    border-radius: 8px;
+    background: none;
+    padding: 0.5em 0;
+    border-radius: 0;
     max-height: 500px;
+    line-height: 1.8 !important;
+    font-size: 1em;
+}
+
+/* IntelliJ Light highlight.js theme */
+.reveal pre code,
+.reveal pre code .hljs,
+.hljs {
+    color: #000;
+    background: none !important;
+}
+
+.hljs-comment,
+.hljs-quote { color: #8c8c8c; font-style: italic; }
+
+.hljs-keyword,
+.hljs-selector-tag { color: #0033b3; font-weight: 700; }
+
+.hljs-type,
+.hljs-title.class_,
+.hljs-built_in { color: #000; }
+
+.hljs-title.function_,
+.hljs-title.function_.invoke__ { color: #7a7a43; }
+
+.hljs-string,
+.hljs-template-variable { color: #067d17; }
+
+.hljs-number,
+.hljs-literal { color: #1750eb; }
+
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-meta .hljs-string { color: #808000; font-weight: 700; }
+
+.hljs-attr,
+.hljs-attribute { color: #174ad4; }
+
+.hljs-params { color: #000; }
+
+.hljs-punctuation,
+.hljs-operator { color: #000; }
+
+.hljs-variable,
+.hljs-template-variable { color: #660e7a; }
+
+.hljs-regexp { color: #264eff; }
+
+.hljs-symbol { color: #000; }
+
+.hljs-selector-id,
+.hljs-selector-class { color: #9e880d; }
+
+.hljs-addition { color: #067d17; background: #e6ffe6; }
+.hljs-deletion { color: #a31515; background: #ffe6e6; }
+
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }
+
+.reveal code.textmate {
+    font-size: x-large;
+    color: black !important;
+    text-align: center;
+}
+
+.reveal code.textmate .hljs-comment {
+    color: black !important;
 }
 
 .reveal ul, .reveal ol {
     text-align: left;
-    margin-left: 1em;
+    margin-left: 1.2em;
+    list-style: none;
 }
 
-.reveal li { margin-bottom: 0.4em; }
+.reveal ul > li {
+    position: relative;
+    padding-left: 0.2em;
+}
+
+.reveal ul > li::before {
+    content: "";
+    --bullet-color: var(--color-blue);
+    --bullet-size: 5;
+    background-image: paint(sketchyBullet);
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    position: absolute;
+    left: -1.1em;
+    top: 0.35em;
+}
+
+/* Fallback for browsers without Paint API */
+@supports not (background: paint(id)) {
+    .reveal ul > li::before {
+        content: "\2022";
+        background-image: none;
+        color: var(--color-blue);
+        font-weight: 700;
+        width: 1em;
+        height: auto;
+        position: static;
+        margin-left: -1em;
+    }
+}
+
+.reveal li {
+    margin-bottom: 0.3em;
+    line-height: 1;
+}
+
+.reveal p {
+    line-height: 1.7;
+}
 
 .reveal .subtitle {
     font-style: italic;
@@ -70,19 +253,19 @@
 }
 
 /* Chapter divider slides — blue bg with handwritten text */
-.reveal section[data-background-color="#5B9BD5"] h2,
-.reveal section[data-background-color="#5B9BD5"] h3,
-.reveal section[data-background-color="#5B9BD5"] p {
+.reveal section[data-background-color="#4595EB"] h2,
+.reveal section[data-background-color="#4595EB"] h3,
+.reveal section[data-background-color="#4595EB"] p {
     color: white;
     font-family: var(--font-handwritten);
 }
 
-.reveal section[data-background-color="#5B9BD5"] h2 {
+.reveal section[data-background-color="#4595EB"] h2 {
     font-size: 2.5em;
     font-weight: 700;
 }
 
-.reveal section[data-background-color="#5B9BD5"] p {
+.reveal section[data-background-color="#4595EB"] p {
     font-size: 1.4em;
 }
 
@@ -90,15 +273,30 @@
 .reveal .red { color: var(--color-red); }
 .reveal .blue { color: var(--color-blue); }
 
-/* Key message box */
+/* Key message box — rough hand-drawn rectangle with fill */
 .reveal .key-message {
-    background: var(--color-gray);
-    border-left: 4px solid var(--color-blue);
-    padding: 0.8em 1.2em;
+    --box-color: var(--color-red);
+    --box-fill: rgba(255, 2, 74, 0.04);
+    --box-width: 2;
+    --box-roughness: 3;
+    background-image: paint(sketchyBox);
+    background-color: transparent;
+    border: none;
+    padding: 1.2em 1.6em;
     margin: 1em 0;
     font-weight: 600;
     font-size: 0.95em;
-    text-align: left;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Fallback for browsers without Paint API */
+@supports not (background: paint(id)) {
+    .reveal .key-message {
+        background: rgba(255, 2, 74, 0.04);
+        border: 2px solid var(--color-red);
+        border-radius: 2px;
+    }
 }
 
 /* Quote slide style — red left border */
@@ -112,12 +310,17 @@
 .reveal table {
     font-size: 0.7em;
     border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.8em;
 }
 
 .reveal table th {
     background: var(--color-blue);
     color: white;
     padding: 0.5em 0.8em;
+    font-family: var(--font-title);
+    font-weight: 700;
 }
 
 .reveal table td {
@@ -166,7 +369,7 @@
 }
 
 .demo-panel .chat-message.blocked {
-    background: #fde8e8;
+    background: rgba(255, 2, 74, 0.08);
     color: var(--color-red);
     border: 1px solid var(--color-red);
     margin-right: 20%;
@@ -204,7 +407,7 @@
 }
 
 .demo-panel .chat-send:hover {
-    background: #4a8bc4;
+    background: #4568c9;
 }
 
 .demo-panel .audit-log {
@@ -252,7 +455,7 @@
 }
 
 .demo-panel .workflow-step.active {
-    background: #e8f0fe;
+    background: rgba(69, 149, 235, 0.1);
     border: 1px solid var(--color-blue);
 }
 
@@ -268,6 +471,72 @@
 .demo-panel .workflow-step .step-icon {
     width: 24px;
     text-align: center;
+}
+
+/* Multi-agent pipeline visualization */
+.demo-multi-agent .agent-pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    margin-bottom: 1em;
+}
+
+.demo-multi-agent .pipeline-node {
+    background: var(--color-gray);
+    border: 2px solid #d0d0d0;
+    border-radius: 8px;
+    padding: 0.3em 0.8em;
+    font-family: var(--font-body);
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+.demo-multi-agent .pipeline-node.active {
+    border-color: var(--color-blue);
+    background: rgba(69, 149, 235, 0.1);
+    color: var(--color-blue);
+}
+
+.demo-multi-agent .pipeline-node.done {
+    border-color: #4caf50;
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.demo-multi-agent .pipeline-arrow {
+    color: #bbb;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.demo-multi-agent .agent-steps {
+    margin-top: 0.8em;
+}
+
+.demo-multi-agent .agent-result {
+    margin-top: 0.8em;
+    padding: 0.8em 1em;
+    background: #f8f9fa;
+    border-left: 3px solid var(--color-blue);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.8em;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.demo-multi-agent .agent-result.visible {
+    display: block;
+}
+
+.demo-multi-agent .task-send {
+    min-width: 44px;
+    font-size: 1.1em;
+    padding: 0.5em 0.8em;
 }
 
 .demo-panel .approval-buttons {
@@ -297,10 +566,94 @@
     font-weight: 600;
 }
 
-/* Slide number styling */
+/* Title slide */
+.title-slide {
+    text-align: left !important;
+    padding-left: 2em !important;
+    border-left: 6px solid var(--color-red);
+    height: 100%;
+}
+
+.title-slide h1 {
+    font-size: 2.4em !important;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 0.1em;
+    margin-top: 0.5em;
+}
+
+.title-slide .title-subtitle {
+    font-style: italic;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.title-slide .title-author {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-top: 2.5em;
+}
+
+.title-slide .title-author img {
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.title-slide .title-author-info {
+    text-align: left;
+    font-size: 0.65em;
+    line-height: 1.5;
+}
+
+.title-slide .title-author-info .author-name {
+    color: var(--color-blue);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.title-slide .title-logos {
+    position: absolute;
+    bottom: 1.5em;
+    right: 2em;
+    display: flex;
+    align-items: center;
+    gap: 1.5em;
+}
+
+.title-slide .title-logos img {
+    height: 30px;
+}
+
+/* Quarkus logo — bottom-left, aligned with navigation arrows */
+.slide-logo {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    width: 36px;
+    height: 36px;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 30;
+}
+
+/* Hide slide number */
 .reveal .slide-number {
-    font-size: 0.5em;
-    color: #999;
+    display: none;
+}
+
+/* Navigation arrows — blue by default */
+.reveal .controls button {
+    color: var(--color-blue);
+}
+
+/* Navigation arrows — white on blue chapter dividers */
+.reveal.has-dark-background .controls button {
+    color: white;
 }
 
 /* Footer with logos — added via CSS */

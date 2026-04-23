@@ -4,6 +4,7 @@ import dev.langchain4j.agent.tool.Tool;
 import io.quarkus.presentation.service.OrderService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class OrderTools {
@@ -14,6 +15,7 @@ public class OrderTools {
     @Inject
     AuditLog auditLog;
 
+    @Transactional
     @Tool("Get the current status of a customer order by order ID")
     public String getOrderStatus(long orderId) {
         auditLog.log("getOrderStatus", "orderId=" + orderId, null);

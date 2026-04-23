@@ -6,10 +6,11 @@
     <title>From Chatbot to Agentic: The Quarkus AI Story</title>
     <link rel="stylesheet" href="/_static/reveal.js/5.2.1/dist/reset.css">
     <link rel="stylesheet" href="/_static/reveal.js/5.2.1/dist/reveal.css">
-    <link rel="stylesheet" href="/_static/reveal.js/5.2.1/plugin/highlight/monokai.css">
+    <!-- highlight.js theme is defined in theme.css (IntelliJ Light) -->
     <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
+    <img src="images/quarkus-logo.png" class="slide-logo" alt="">
     <div class="reveal">
         <div class="slides">
             <section data-markdown="slides.md"
@@ -29,7 +30,7 @@
 
         Reveal.initialize({
             hash: true,
-            slideNumber: true,
+            slideNumber: false,
             width: 1280,
             height: 720,
             margin: 0.1,
@@ -37,5 +38,13 @@
         });
     </script>
     <script src="/js/demos.js" defer></script>
+    <script>
+        if ('paintWorklet' in CSS) {
+            CSS.paintWorklet.addModule('/js/sketchy-underline.js');
+            CSS.paintWorklet.addModule('/js/sketchy-box.js');
+            CSS.paintWorklet.addModule('/js/sketchy-bullet.js');
+            CSS.paintWorklet.addModule('/js/sketchy-emphasis.js');
+        }
+    </script>
 </body>
 </html>
