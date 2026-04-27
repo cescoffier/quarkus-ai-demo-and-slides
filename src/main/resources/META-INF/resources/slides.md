@@ -810,5 +810,9 @@ Note: Every chapter comes with observability, testability, security, fault toler
 <img src="images/qr-slides.png" alt="QR Slides" style="width: 140px; height: 140px; border: 3px solid var(--color-red); border-radius: 4px;">
 <div style="background: var(--color-red); color: white; padding: 0.2em 1.2em; border-radius: 4px; font-weight: 600; font-size: 0.7em; margin-top: 0.3em;">Slides</div>
 </div>
+<div style="text-align: center;">
+<img src="images/feedback.png" alt="Feedback" style="width: 140px; height: 140px; border: 3px solid #F97316; border-radius: 4px;">
+<div style="background: #F97316; color: white; padding: 0.2em 1.2em; border-radius: 4px; font-weight: 600; font-size: 0.7em; margin-top: 0.3em;">Feedback</div>
+</div>
 </div>
 
